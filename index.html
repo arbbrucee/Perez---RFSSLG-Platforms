@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Perez — Platforms for CARAGA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:   #0C1A28;
+    --deep:  #111F30;
+    --slate: #1A3048;
+    --steel: #254464;
+    --sky:   #3880C0;
+    --ice:   #7EC8E3;
+    --gold:  #E9BE55;
+    --cream: #EEE9DF;
+    --fog:   rgba(238,233,223,0.5);
+    --mist:  rgba(238,233,223,0.22);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23g)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.1rem 3.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(12,26,40,0.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(126,200,227,0.09);
+  }
+
+  .nav-id { display: flex; flex-direction: column; gap: 0.1rem; }
+
+  .nav-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 600;
+    color: var(--cream); letter-spacing: 0.02em;
+  }
+
+  .nav-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem; letter-spacing: 0.14em;
+    color: var(--ice); text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 400;
+    color: var(--fog); text-decoration: none;
+    letter-spacing: 0.04em; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ice); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 3.5rem 5.5rem;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 65% at 100% 100%, rgba(56,128,192,0.16) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 10% 20%, rgba(233,190,85,0.05) 0%, transparent 55%),
+      linear-gradient(175deg, var(--ink) 0%, var(--deep) 100%);
+    pointer-events: none;
+  }
+
+  .hero-watermark {
+    position: absolute; bottom: -3rem; right: -2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(9rem, 20vw, 20rem);
+    font-weight: 600; font-style: italic;
+    color: rgba(56,128,192,0.035);
+    line-height: 1; pointer-events: none; user-select: none;
+    white-space: nowrap;
+  }
+
+  .hero-top {
+    position: absolute; top: 7rem; left: 3.5rem; right: 3.5rem;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    opacity: 0; animation: fadeIn 0.7s 0.3s forwards;
+  }
+
+  .hero-from {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ice);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-from::before {
+    content: ''; display: block;
+    width: 28px; height: 1px; background: var(--ice);
+  }
+
+  .hero-region {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.12em;
+    color: var(--fog); text-transform: uppercase;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    opacity: 0; animation: slideUp 0.9s 0.5s forwards;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.16em;
+    color: var(--gold); text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 7.5vw, 7.2rem);
+    font-weight: 600; line-height: 0.95;
+    color: var(--cream); margin-bottom: 0.6rem;
+  }
+  .hero-h1 em { font-style: italic; color: var(--ice); }
+
+  .hero-h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2vw, 1.65rem);
+    font-style: italic; font-weight: 400;
+    color: var(--fog); margin-bottom: 2.5rem;
+  }
+
+  .hero-body {
+    font-size: 0.95rem; font-weight: 300;
+    color: var(--fog); line-height: 1.8;
+    max-width: 500px; margin-bottom: 3rem;
+    padding-left: 1.2rem;
+    border-left: 2px solid rgba(126,200,227,0.28);
+  }
+  .hero-body strong { color: var(--cream); font-weight: 500; }
+  .hero-body em { font-style: italic; color: var(--ice); }
+
+  .hero-scroll {
+    display: flex; align-items: center; gap: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.18em;
+    color: var(--fog); text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0; animation: fadeIn 0.7s 1.4s forwards;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ice);
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.35;transform:scale(0.65);} }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  @keyframes slideUp { from{opacity:0;transform:translateY(38px);} to{opacity:1;transform:translateY(0);} }
+
+  /* TICKER */
+  .ticker {
+    background: var(--gold); padding: 0.8rem 0;
+    overflow: hidden; white-space: nowrap;
+  }
+  .ticker-track { display: inline-flex; animation: scroll 28s linear infinite; }
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.66rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink); padding: 0 2.5rem;
+  }
+  .ticker-item::after { content: '·'; margin-left: 2.5rem; }
+  @keyframes scroll { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+  /* SECTIONS */
+  section { padding: 6.5rem 3.5rem; position: relative; }
+
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ice);
+    margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .label::before { content: ''; display: block; width: 18px; height: 1px; background: var(--ice); }
+
+  .sec-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 600; line-height: 1.1; color: var(--cream);
+  }
+  .sec-title em { font-style: italic; color: var(--ice); }
+
+  /* IDENTITY */
+  #identity { background: var(--deep); }
+
+  .id-grid {
+    display: grid; grid-template-columns: 320px 1fr;
+    gap: 5rem; align-items: start; margin-top: 3.5rem;
+  }
+
+  .id-card {
+    background: var(--slate);
+    border: 1px solid rgba(126,200,227,0.1);
+    padding: 2.4rem; position: relative;
+  }
+  .id-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .id-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem; font-weight: 600; color: var(--cream); margin-bottom: 0.2rem;
+  }
+
+  .id-pos {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.12em; color: var(--gold);
+    text-transform: uppercase; margin-bottom: 1.4rem; padding-bottom: 1.4rem;
+    border-bottom: 1px solid rgba(126,200,227,0.1);
+  }
+
+  .id-rows { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .id-row { display: flex; flex-direction: column; gap: 0.15rem; }
+
+  .id-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fog);
+  }
+
+  .id-val { font-size: 0.88rem; font-weight: 500; color: var(--cream); }
+
+  .id-right { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  .id-right p { font-size: 0.97rem; font-weight: 300; color: var(--fog); line-height: 1.85; }
+  .id-right p strong { color: var(--cream); font-weight: 500; }
+  .id-right p em { font-style: italic; color: var(--ice); }
+
+  /* PLATFORMS */
+  #platforms { background: var(--ink); }
+
+  .plat-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; margin-bottom: 4.5rem; align-items: end;
+  }
+
+  .plat-note { font-size: 0.9rem; font-weight: 300; color: var(--fog); line-height: 1.8; }
+
+  .plat-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(126,200,227,0.06);
+  }
+
+  .plat-card {
+    background: var(--ink); padding: 2.8rem 2.6rem;
+    position: relative; overflow: hidden; transition: background 0.3s;
+  }
+  .plat-card:hover { background: #121f30; }
+
+  .plat-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    height: 2px; width: 0; background: var(--gold); transition: width 0.45s ease;
+  }
+  .plat-card:hover::after { width: 100%; }
+
+  .plat-bg-num {
+    position: absolute; top: 0.5rem; right: 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 7rem; font-style: italic; font-weight: 400;
+    color: rgba(126,200,227,0.04); line-height: 1; transition: color 0.3s; pointer-events: none;
+  }
+  .plat-card:hover .plat-bg-num { color: rgba(126,200,227,0.08); }
+
+  .plat-icon { font-size: 1.5rem; margin-bottom: 1.2rem; display: block; }
+
+  .plat-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ice); margin-bottom: 0.5rem; display: block;
+  }
+
+  .plat-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 600; color: var(--cream); line-height: 1.2; margin-bottom: 0.9rem;
+  }
+
+  .plat-desc { font-size: 0.87rem; font-weight: 300; color: var(--fog); line-height: 1.72; margin-bottom: 1.4rem; }
+
+  .plat-list { list-style: none; display: flex; flex-direction: column; gap: 0.42rem; margin-bottom: 1.5rem; }
+
+  .plat-list li {
+    font-size: 0.81rem; font-weight: 300; color: rgba(238,233,223,0.6);
+    padding-left: 1.1rem; position: relative; line-height: 1.5;
+  }
+  .plat-list li::before { content: '—'; position: absolute; left: 0; color: var(--ice); font-size: 0.7rem; }
+
+  .plat-stance {
+    padding: 0.8rem 1rem; background: rgba(233,190,85,0.05);
+    border-left: 2px solid rgba(233,190,85,0.5);
+  }
+  .plat-stance p { font-size: 0.79rem; font-style: italic; color: rgba(233,190,85,0.88); line-height: 1.55; }
+
+  /* PROJECTS */
+  #projects { background: var(--deep); }
+
+  .proj-header { margin-bottom: 4rem; }
+
+  .proj-list { display: flex; flex-direction: column; }
+
+  .proj-row {
+    display: grid; grid-template-columns: 60px 1fr 260px;
+    gap: 2rem; align-items: start;
+    padding: 2.2rem 0;
+    border-top: 1px solid rgba(238,233,223,0.07);
+    transition: padding 0.2s, background 0.2s;
+  }
+  .proj-row:last-child { border-bottom: 1px solid rgba(238,233,223,0.07); }
+  .proj-row:hover { padding-left: 0.75rem; background: rgba(126,200,227,0.03); }
+
+  .proj-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.08em; color: var(--fog); padding-top: 0.3rem;
+  }
+
+  .proj-body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 600; color: var(--cream); margin-bottom: 0.5rem; line-height: 1.2;
+  }
+
+  .proj-body p { font-size: 0.86rem; font-weight: 300; color: var(--fog); line-height: 1.68; max-width: 580px; }
+
+  .proj-meta { display: flex; flex-direction: column; gap: 0.38rem; align-items: flex-end; padding-top: 0.3rem; }
+
+  .mtag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 0.22rem 0.6rem;
+    border: 1px solid; white-space: nowrap;
+  }
+  .mt-b { border-color: rgba(126,200,227,0.35); color: var(--ice); }
+  .mt-g { border-color: rgba(233,190,85,0.35); color: var(--gold); }
+  .mt-r { border-color: rgba(210,130,100,0.4); color: #E8A882; }
+
+  /* CLOSING */
+  #closing { background: var(--ink); padding: 8rem 3.5rem; }
+
+  .closing-wrap { max-width: 760px; }
+
+  .closing-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 3.2vw, 2.6rem);
+    font-weight: 400; line-height: 1.5; color: var(--cream); margin-bottom: 3rem;
+  }
+  .closing-quote em { font-style: italic; color: var(--ice); }
+  .closing-quote strong { font-weight: 600; }
+
+  .sig { display: flex; flex-direction: column; gap: 0.28rem; }
+
+  .sig-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--cream); }
+
+  .sig-a { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+
+  .sig-b { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--fog); text-transform: uppercase; }
+
+  /* FOOTER */
+  footer {
+    background: var(--deep); padding: 1.75rem 3.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(126,200,227,0.08);
+  }
+
+  .ft-l { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--fog); text-transform: uppercase; line-height: 1.65; }
+
+  .ft-r { display: flex; gap: 2rem; }
+
+  .ft-r a { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--fog); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .ft-r a:hover { color: var(--ice); }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .hero { padding: 0 1.5rem 4rem; }
+    .hero-top { left: 1.5rem; right: 1.5rem; }
+    .id-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .plat-header { grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 3rem; }
+    .plat-grid { grid-template-columns: 1fr; }
+    .proj-row { grid-template-columns: 50px 1fr; }
+    .proj-meta { display: none; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .ft-r { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-id">
+    <div class="nav-name">Arnold Bruce V. Perez</div>
+    <div class="nav-sub">President · DFSSLG · SDO Tandag City</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#identity">About</a></li>
+    <li><a href="#platforms">Platforms</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#closing">Message</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-watermark">CARAGA</div>
+
+  <div class="hero-top">
+    <div class="hero-from">DFSSLG · SDO Tandag City</div>
+    <div class="hero-region">RFSSLG CARAGA · 2025</div>
+  </div> <br><br> <br>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">My Platforms & Projects for CARAGA Students</p>
+    <br><br><br><h1 class="hero-h1">What I<br>Stand <em>For.</em></h1>
+    <p class="hero-h2">Regional Federation of Supreme Secondary<br>Learner Government — CARAGA</p>
+    <p class="hero-body">
+      These are the <strong>platforms and projects</strong> I believe CARAGA's secondary learners deserve.
+      Built from what I've seen firsthand —
+      <em>outcomes students actually feel,</em> not systems built for documentation.
+    </p>
+  </div>
+
+  <div class="hero-scroll" onclick="document.getElementById('identity').scrollIntoView({behavior:'smooth'})">
+    <div class="dot"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Student-Driven Action</span>
+    <span class="ticker-item">Mental Health & Resilience</span>
+    <span class="ticker-item">Inter-School Outcomes</span>
+    <span class="ticker-item">Transparent Governance</span>
+    <span class="ticker-item">Visible Results</span>
+    <span class="ticker-item">For Every Learner in CARAGA</span>
+    <span class="ticker-item">Student-Driven Action</span>
+    <span class="ticker-item">Mental Health & Resilience</span>
+    <span class="ticker-item">Inter-School Outcomes</span>
+    <span class="ticker-item">Transparent Governance</span>
+    <span class="ticker-item">Visible Results</span>
+    <span class="ticker-item">For Every Learner in CARAGA</span>
+  </div>
+</div>
+
+<!-- IDENTITY -->
+<section id="identity">
+  <div class="label">Who I Am</div>
+  <h2 class="sec-title">A Leader <em>From Tandag.</em><br>Advocating for <em>All of CARAGA.</em></h2>
+
+  <div class="id-grid">
+    <div class="id-card reveal">
+      <div class="id-name">Arnold Bruce V. Perez</div>
+      <div class="id-pos">President · DFSSLG · SDO Tandag City</div>
+      <div class="id-rows">
+        <div class="id-row">
+          <span class="id-key">Current Role</span>
+          <span class="id-val">President</span>
+        </div>
+        <div class="id-row">
+          <span class="id-key">Organization</span>
+          <span class="id-val">Division Federation of SSLG</span>
+        </div>
+        <div class="id-row">
+          <span class="id-key">Division</span>
+          <span class="id-val">SDO Tandag City</span>
+        </div>
+        <div class="id-row">
+          <span class="id-key">Scope of Advocacy</span>
+          <span class="id-val">RFSSLG CARAGA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="id-right reveal">
+      <p>
+        I'm Arnold Bruce V. Perez, currently serving as <strong>President of the Division Federation of
+        Supreme Secondary Learner Government under SDO Tandag City.</strong> The platforms I'm sharing here represent what I believe
+        our federation should be working toward for every secondary learner across CARAGA.
+      </p>
+      <p>
+        I've seen how student governments can drift from what students actually need;
+        concerns that go nowhere, mental health struggles met with silence,
+        inter-school events that produce nothing lasting, and governance that students
+        can't understand or connect to.
+      </p>
+      <p>
+        These <em>four platforms and six concrete projects</em> are what I'd want to push for
+        at the regional level: a clear picture of the
+        <strong>direction I believe CARAGA's secondary learners deserve.</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <div class="plat-header reveal">
+    <div>
+      <div class="label">My Platforms</div>
+      <h2 class="sec-title">Four Areas.<br><em>Real Commitment.</em></h2>
+    </div>
+    <p class="plat-note">
+      Each platform targets a specific gap I've seen in how we serve CARAGA's
+      secondary learners. These aren't merely themes, they're the areas the federation
+      actively work on and be held accountable to.
+    </p>
+  </div>
+
+  <div class="plat-grid">
+
+    <div class="plat-card reveal">
+      <div class="plat-bg-num">01</div>
+      <span class="plat-tag">Platform 01</span>
+      <h3 class="plat-title">Student-Driven Action System</h3>
+      <p class="plat-desc">
+        We should move past "feedback mechanisms" and build real response systems.
+        When a student raises a concern, they deserve to see what happens to it.
+        Not silence, not a form, but visible and trackable movement.
+      </p>
+      <ul class="plat-list">
+        <li>Fast-response student concern tracking, not just a grievance system</li>
+        <li>Visible resolution updates so students see progress, not silence</li>
+        <li>School-level "Action Points" per issue raised</li>
+        <li>Periodic status summaries per concern type across schools</li>
+      </ul>
+      <div class="plat-stance">
+        <p>Where others stop at building systems, The federation should deliver visible results students can actually feel.</p>
+      </div>
+    </div>
+
+    <div class="plat-card reveal">
+      <div class="plat-bg-num">02</div>
+      <span class="plat-tag">Platform 02</span>
+      <h3 class="plat-title">Mental Health & Student Resilience Network</h3>
+      <p class="plat-desc">
+        This is the area I care about most - as always, for mental health. Mental health in our schools isn't only
+        an awareness issue, it's a response infrastructure issue. We should build
+        that infrastructure region-wide, not just in a few schools.
+      </p>
+      <ul class="plat-list">
+        <li>CARAGA-wide peer support & mental health first aid expansion</li>
+        <li>School-based "safe response teams or peer mediators" under SSLG collaboration</li>
+        <li>Stress, burnout, and academic pressure interventions, not just campaigns</li>
+        <li>Structured support at peak academic stress periods per school</li>
+      </ul>
+      <div class="plat-stance">
+        <p>While others focus on structure, we should focus on student survival and well-being inside that structure.</p>
+      </div>
+    </div>
+
+    <div class="plat-card reveal">
+      <div class="plat-bg-num">03</div>
+      <span class="plat-tag">Platform 03</span>
+      <h3 class="plat-title">Inter-School Collaboration That Produces Outcomes</h3>
+      <p class="plat-desc">
+        I've seen inter-school engagements that exist purely for documentation.
+        I want our schools to produce things togethe: real outputs, ideas,
+        and skills that outlast any single school year.
+      </p>
+      <ul class="plat-list">
+        <li>Cross-school projects with measurable outputs, not events for formality</li>
+        <li>Leadership skill exchanges: students teaching students across divisions</li>
+        <li>Regional student innovation challenges in policy, research, or community solutions</li>
+        <li>Documented deliverables per collaboration cycle, not just attendance records</li>
+      </ul>
+      <div class="plat-stance">
+        <p>Others connect schools. Our region's schools should produce things together — tangibly.</p>
+      </div>
+    </div>
+
+    <div class="plat-card reveal">
+      <div class="plat-bg-num">04</div>
+      <span class="plat-tag">Platform 04</span>
+      <h3 class="plat-title">Transparent & Humanized Federation Governance</h3>
+      <p class="plat-desc">
+        I want every student in CARAGA to understand what their federation is doing —
+        not in formal language, but in honest, plain, student-friendly terms.
+        Real accountability starts with being understood.
+      </p>
+      <ul class="plat-list">
+        <li>Monthly "What We Did / What Changed" reports in student-friendly format</li>
+        <li>Open livestream consultations — conversational, not formal hearings</li>
+        <li>Simplified communication across all federation channels</li>
+        <li>No heavy bureaucratic language in how we speak to students</li>
+      </ul>
+      <div class="plat-stance">
+        <p>Others build systems. I want to make those systems understandable and relatable to every student.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="proj-header reveal">
+    <div class="label">Concrete Projects</div>
+    <h2 class="sec-title">Six Things<br><em>I'd Actually Build.</em></h2>
+    <p style="margin-top:1rem; font-size:0.88rem; font-weight:300; color:var(--fog); max-width:540px; line-height:1.75;">
+      Platforms without projects are just words. Here's exactly what I'd work on.
+      Each one tied to a platform, each one with a clear purpose.
+    </p>
+  </div>
+
+  <div class="proj-list">
+
+    <div class="proj-row reveal">
+      <div class="proj-id">P — 01</div>
+      <div class="proj-body">
+        <h3>CARAGA Student Action Tracker (CSAT)</h3>
+        <p>A region-wide system where students submit concerns and track resolution in real time. Each member school SSLG gets an Action Points dashboard updated monthly. No more silent feedback boxes. Students will see exactly what happened to their concern, and when.</p>
+      </div>
+      <div class="proj-meta">
+        <span class="mtag mt-b">Platform 01</span>
+        <span class="mtag mt-g">Digital Tool</span>
+        <span class="mtag mt-b">Transparency</span>
+      </div>
+    </div>
+
+    <div class="proj-row reveal">
+      <div class="proj-id">P — 02</div>
+      <div class="proj-body">
+        <h3>CARAGA Peer Mental Health First Aid Corps</h3>
+        <p>Training student volunteers in every member school in mental health first aid and peer support protocols. Together, we build a regional network of "safe responders or peer mediators", students who can recognize distress early and respond, backed by SSLG, school-level coordination, and professional mental health workers.</p>
+      </div>
+      <div class="proj-meta">
+        <span class="mtag mt-r">Platform 02</span>
+        <span class="mtag mt-g">Well-being</span>
+        <span class="mtag mt-b">Region-wide</span>
+      </div>
+    </div>
+
+    <div class="proj-row reveal">
+      <div class="proj-id">P — 03</div>
+      <div class="proj-body">
+        <h3>Burnout-Free Semester Initiative</h3>
+        <p>A structured program targeting academic stress at peak periods: exam season, enrollment, and major submission weeks. Each participating school gets a stress-mapping process and interventions tailored to their context. Not generic motivational events, actual support when students need it most.</p>
+      </div>
+      <div class="proj-meta">
+        <span class="mtag mt-r">Platform 02</span>
+        <span class="mtag mt-g">Intervention</span>
+      </div>
+    </div>
+
+    <div class="proj-row reveal">
+      <div class="proj-id">P — 04</div>
+      <div class="proj-body">
+        <h3>CARAGA Student Innovation Challenge (CSIC)</h3>
+        <p>A regional challenge where student teams across CARAGA collaboratively develop policy proposals, community research, or innovation projects. Outputs are presented to regional stakeholders. It produces real results, real recognition, and impact that extends beyond any single school or division.</p>
+      </div>
+      <div class="proj-meta">
+        <span class="mtag mt-b">Platform 03</span>
+        <span class="mtag mt-g">Cross-School</span>
+        <span class="mtag mt-r">Innovation</span>
+      </div>
+    </div>
+
+    <div class="proj-row reveal">
+      <div class="proj-id">P — 05</div>
+      <div class="proj-body">
+        <h3>Leadership Bridge Exchange Program</h3>
+        <p>Peer-to-peer leadership skill exchanges between member schools. Student leaders teaching specific competencies to counterparts in other schools. Building real inter-school bonds and spreading leadership capacity across all of CARAGA, not just in a few well-resourced institutions.</p>
+      </div>
+      <div class="proj-meta">
+        <span class="mtag mt-b">Platform 03</span>
+        <span class="mtag mt-g">Leadership</span>
+      </div>
+    </div>
+
+    <div class="proj-row reveal">
+      <div class="proj-id">P — 06</div>
+      <div class="proj-body">
+        <h3>RFSSLG Monthly Pulse Report</h3>
+        <p>A regular student-friendly digest of what the Federation actually did, what changed, what's pending, and what students can engage with next. Distributed across member schools in an accessible format, with monthly open consultations livestreamed for anyone who wants to ask questions or raise concerns directly.</p>
+      </div>
+      <div class="proj-meta">
+        <span class="mtag mt-g">Platform 04</span>
+        <span class="mtag mt-b">Transparency</span>
+        <span class="mtag mt-r">Governance</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section id="closing">
+  <div class="closing-wrap reveal">
+    <div class="label">A Personal Note</div>
+    <p class="closing-quote">
+      I know that platforms can look impressive on a page.<br>
+      What I care about is whether they <em>land</em> —
+      whether students across CARAGA actually feel a difference. <br>
+      <br><em> Lagi't lagi, para sa kabataan, para sa isip-pangkalusugan,
+      para sa bayan.</em></h3><br>
+      <strong>That's the standard I hold myself to.</strong>
+      <br><em> Always, for MENTAL HEALTH.</em></h3><br>
+    </p>
+    <div class="sig">
+      <div class="sig-name">Arnold Bruce V. Perez</div>
+      <div class="sig-a">President · Division Federation of SSLG</div>
+      <div class="sig-b">SDO Tandag City · CARAGA</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-l">
+    Arnold Bruce V. Perez<br>
+    President · DFSSLG · SDO Tandag City · CARAGA
+  </div>
+  <div class="ft-r">
+    <a href="#identity">About</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#projects">Projects</a>
+    <a href="#closing">Message</a>
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 3) * 0.11}s`;
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
+ 
